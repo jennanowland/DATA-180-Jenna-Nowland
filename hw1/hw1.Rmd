@@ -9,6 +9,9 @@ output:
   pdf_document: default
 subtitle: Data 180, Professor Kennedy
 ---
+
+20/20. This is excellent work Jenna. Good job.
+
 Make sure that you have accepted the hw invitation link, and working with your clone repository.
 
 **Due date:** September 21 beginning of class.
