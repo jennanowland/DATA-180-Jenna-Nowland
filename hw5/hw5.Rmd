@@ -2,8 +2,8 @@
 title: "HW 5"
 subtitle: "Data 180, Professor Kennedy"
 author: 
-  name: "Your Name"
-  email: "XXXX@dickinson.edu"
+  name: "Jenna Nowland"
+  email: "nowlandj@dickinson.edu"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: 
   html_document
@@ -20,10 +20,19 @@ print(X)
 ```
 
 a) Find the Euclidean distance between the first and second objects. Round the answer to have two decimal points. 
+```{r}
+# 6.4 - work done by hand
+```
 
 b) Find the Manhattan distance between the first and third objects. Round the answer to have two decimal points.
+```{r}
+# 10 - work done by hand
+```
 
 c) Find the Minkowski distance ($\ro$ = 3) between the second and third objects. Round the answer to have two decimal points.  
+```{r}
+# 2.22 - work done by hand
+```
 
 # Question 2
 a) Use the filter and select commands to choose only vans from the `Cars93` data set. Select the variables (in this order) Model, Price, EngineSize, Horsepower, MPG.highway, and Length. Name this object `Vans93`. Note: Be sure to load the `dplyr` package after loading `MASS` to prevent masking of the select command. How many objects does `Vans93` have? Print the `Vans93` dataframe in your solutions. Note2: If you get any errors with `select()`, try using `dplyr::select()` to avoid conflicts in `dplyr` and `MASS` packages.
@@ -31,26 +40,44 @@ a) Use the filter and select commands to choose only vans from the `Cars93` data
 library(MASS)
 library(dplyr)
 
-
+Vans93 <- Cars93 %>%
+  filter(Type == "Van") %>%
+  select(Model, Price, EngineSize, Horsepower, MPG.highway, Length)
+head(Vans93)
 
 ```
 
 b) Use the `dist` and `as.matrix` functions to find the distance matrix for the vans set using the Euclidean metric. Call this matrix `Vans_Euclidean`. You will need to remove the first column of the `Vans93` dataframe when you pass it into the `dist` function, since the variable `Model` is not an appropriate variable for the cluster variate. You can do this by passing in `Vans93[,-1]` or `Vans93[,2:6]` (or any other way you like), converting it to a matrix and storing it as `Vans_Euclidean`. Next, set the row and column names of `Vans_Euclidean` to the Models of the vans using the rownames and colnames functions, so that it is easier for us to see what object we have in each row/column. Hint: This can be done by typing
 
-```
+```{r}
+Vans_Euclidean <- dist(Vans93[,2:6])
+Vans_Euclidean
+Vans_Euclidean <- as.matrix(Vans_Euclidean)
 colnames(Vans_Euclidean)<-Vans93[,1]
 rownames(Vans_Euclidean)<-Vans93[,1]
+
+Vans_Euclidean
+
 ```
 
 Finally, round the values in this matrix to the hundredths place (two decimal points). Paste the final version of the matrix `Vans_Euclidean` into your solutions. Which two Vans (give the models) have the shortest distance between them? Which two have the largest distance between them?
 ```{r}
-
+round(Vans_Euclidean,2)
+# max_distance = (Lumina_APV, Eurovan)
+# min_distance = (Caravan, Aerostar)
 ```
 
 
 
 c) Repeat the steps in part (b) but use the Manhattan metric and call the object `Vans_Manhattan`.
 ```{r}
+Vans_Manhattan <- dist(Vans93[,2:6], method = "manhattan")
+Vans_Manhattan
+Vans_Manhattan1 <- as.matrix(Vans_Manhattan)
+colnames(Vans_Manhattan1)<-Vans93[,1]
+rownames(Vans_Manhattan1)<-Vans93[,1]
+round(Vans_Manhattan1, 2)
+Vans_Manhattan1
 
 ```
 
@@ -66,15 +93,22 @@ print(D)
 Find (by hand) the inter-group distance between A = $\{O_1, O_4\}$ and B = $\{O_2, O_3, O_5\}$ (where $O_n$ denotes the $n$th object in the distance matrix **D**) using
 
 a) Nearest-neighbor
-
+```{r}
+# 1 - work done on paper
+```
 
 
 b) Farthest-neighbor
-
+```{r}
+# 9 - work done on paper
+```
 
 c) Average-neighbor
+```{r}
+# 5.02 - work done on paper
+```
 
-# Question 4
+# Question 4 - SKIP !!! 
 Consider the following dendrogram created by a hierarchical clustering of 11 frequently used English words.
 
 ![Caption: 11 frequently used English words](hw5-image.png)
@@ -88,6 +122,9 @@ Let's practice hierarchical clustering with the `vertebrate` dataset that is sav
 
 a) First, read in the `vertebrate.csv` file and store it in a dataframe object named `vertebrate`. How many rows does the dataframe have? Print the entire dataset in your solutions.
 ```{r}
+vertebrate <- read.csv('/Users/jennanowland/Desktop/Jenna Data 180/DATA-180-Jenna-Nowland/hw5/vertebrate.csv')
+nrow(vertebrate)
+vertebrate
 
 ```
 
@@ -96,16 +133,26 @@ b) Perform two separate clustering analyses of the data using the `hclust` funct
 (i)	using the Euclidean metric with complete linkage. Note: Similar to Question 2, start by creating a distance matrix named `vertebrate_euclidean` which should not include any text column. Add row and column names to the matrix from the `vertebrate` dataframe. Then apply `dist()` once again before feeding the matrix into `hclust()` function.
 ```{r}
 Ver_Euclidean<-as.matrix(dist(vertebrate[,-1]))
+colnames(Ver_Euclidean)<-vertebrate[,1]
+rownames(Ver_Euclidean)<-vertebrate[,1]
+Ver_Euclidean <- dist(Ver_Euclidean)
+plot(hclust(Ver_Euclidean, method = "complete"), lwd =3.5, main = "Euclidean Clustered vertebrate", xlab='Vertebrates', cex.lab=1.25, sub = '', hang = 1)
 
 ```
 
 (ii)using the Manhattan metric with single linkage and
 ```{r}
-
+Ver_Manhattan<-as.matrix(dist(vertebrate[,-1], method = 'manhattan'))
+colnames(Ver_Manhattan)<-vertebrate[,1]
+rownames(Ver_Manhattan)<-vertebrate[,1]
+Ver_Manhattan <- dist(Ver_Manhattan)
+plot(hclust(Ver_Manhattan, method = "single"), lwd =3.5, main = "Manhattan Clustered vertebrate", xlab='Vertebrates', cex.lab=1.25, sub = '', hang = 1)
 ```
 
 Which method do you prefer?
-
+```{r}
+# I prefer the single linkeage due to it avoiding that "busy" look.  The single linkeage is noticabley easier to read.
+```
 
 In your dendrograms:
 
