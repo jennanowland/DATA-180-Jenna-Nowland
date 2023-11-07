@@ -2,8 +2,8 @@
 title: "HW 6"
 subtitle: "Data 180, Professor Kennedy"
 author: 
-  name: "Your Name"
-  email: "XXXX@dickinson.edu"
+  name: "Jenna Nowland"
+  email: "nowlandj@dickinson.edu"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: 
   html_document
@@ -11,6 +11,9 @@ output:
 
 ```{r global options, include = FALSE}
 knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+library(dplyr)
+library(ggplot2)
+install.packages('cowplot')
 ```
 
 **Due date:** November 9 beginning of class.
@@ -30,7 +33,9 @@ head(Mammals_Milk)
 Use the `summary()` function to produce a summary of the variables (mean, median..) in the Mammals_Milk data frame.
 
 ```{r}
+summary(Mammals_Milk)
 
+# This summary displays the mean (average), median (middle value in the dataset), 1st Quartile (the median for the first 25% of the data), 3rd Quartile (the median for the last 25% of the data - the upper 75%), and the minimum and maximum values for each Water, Protein, Fat, Lactose, and Ash content in the Mammals_Milk data.  
 ```
 
 To have comparable units, let's standardize values (aka get z-scores) of the five variables: Water, Protein, Fat, Lactose, and Ash using the scale function and store it as an object `Mammals_Milk_Std`. A 0 z-score means an observation is exactly on its mean; a negative value means it's smaller than mean; a larger number means it's larger than the mean. ([Here is a nice summary on z-scores](https://www.simplypsychology.org/z-score.html)). Use this standardized object when indicated in the next questions. 
@@ -50,7 +55,11 @@ Use hierarchical clustering (i.e. `hclust`) to cluster the animals based on the 
 *	Set the frame.plot argument to T to draw a box around the dendrograms
 
 ```{r}
+Mammal_Euclidean <- Mammals_Milk_Std
+Mammal_Euclidean <- dist(Mammal_Euclidean)
+plot(hclust(Mammal_Euclidean, method = 'single'), lwd=3, main = 'Mammals Clustered by Std. Milk Composition \n Euclidean Metric, Complete Linkage', sub="", xlab = 'Mammals', cex.lab=1.25, hang=-1, frame.plot=TRUE)
 
+# the Euclidean metric is a way to find the distance between two points.  Specifically, it would solve by ((y2-y1)^2 + (x2-x1)^2)^1/2.  This takes the square root of the added values to the difference between x and y's squared.  This dendrogram shows these distances using a hierarchical cluster.
 ```
 
 # Question 3
@@ -58,7 +67,13 @@ For k = 3 and k = 4, perform a k-means clustering of the mammals based on their 
 
 ```{r}
 set.seed(125)
+MMilk_km_3 <- kmeans(Mammals_Milk_Std, centers = 3, nstart = 100)
+MMilk_km_4 <- kmeans(Mammals_Milk_Std, centers = 4, nstart = 100) 
+Mammals_Milk <- data.frame(Mammals_Milk) %>% mutate(km_3 = MMilk_km_3$cluster) %>% mutate(km_4 = MMilk_km_4$cluster) 
+Mammals_Milk %>% arrange(km_3) 
+Mammals_Milk %>% arrange(km_4)
 
+# k clustering is a popular way to form clusters in which k is the number of clusters you wish for.  This data frame adds a new column showing the values for k = 3 and k = 4.
 ```
 
 # Question 4
@@ -74,27 +89,39 @@ Use the `group_by` and `summarize` functions to provide tables summarizing the r
 Call the summary tables `MMilk_Agg_K3` and `MMilk_Agg_K4`. Round the elements in the data frames to the hundredths place and paste them into your solutions.
 
 ```{r}
+MMilk_Agg_K3 <- Mammals_Milk %>% group_by(km_3) %>% summarize(Count = nrow(Mammals_Milk), Mean_Water = mean(Water), Mean_Protein =mean(Protein), Mean_Fat = mean(Fat), Mean_Lactose = mean(Lactose), Mean_Ash = mean(Ash)) %>% round(2)
+MMilk_Agg_K4 <- Mammals_Milk %>% group_by(km_4) %>% summarize(Count = nrow(Mammals_Milk), Mean_Water = mean(Water), Mean_Protein =mean(Protein), Mean_Fat = mean(Fat), Mean_Lactose = mean(Lactose), Mean_Ash = mean(Ash)) %>% round(2)
+MMilk_Agg_K3
+MMilk_Agg_K4
 
+# this code summarizes and adds columns which display the mean/average milk, water, protein, fat, lactose, and ash in Mammals milk.
 ```
 # Question 5
 For the K=3 solution, make a set of boxplots showing the distribution of each variable by cluster membership. In total you should have five graphs (one for each variable in the dataset). Each graph should include three boxplots (one for each cluster). *Hint:* Use `ggplot2` with `geom_boxplot` and create five different ggplot objects. Name them as graph1, graph2,... as below. Finally, use the library named `cowplot` which includes the function `plot_grid()` that enables plotting multiple graphs side by side. See more in the cell below. Make sure to change `eval=F` to `eval=T` in its options when you execute the cell.
 
 ```{r, eval=F}
-require(cowplot)
-graph1 <- 
-graph2 <- 
-graph3 <- 
-graph4 <- 
-graph5 <- 
+library(cowplot)
+graph1 <- ggplot(Mammals_Milk, aes(x = factor(km_3), y = Water)) + geom_boxplot()
+graph2 <- ggplot(Mammals_Milk, aes(x = factor(km_3), y = Protein)) + geom_boxplot()
+graph3 <- ggplot(Mammals_Milk, aes(x = factor(km_3), y = Fat)) + geom_boxplot()
+graph4 <- ggplot(Mammals_Milk, aes(x = factor(km_3), y = Lactose)) + geom_boxplot()
+graph5 <- ggplot(Mammals_Milk, aes(x = factor(km_3), y = Ash)) + geom_boxplot()
 
 plot_grid(graph1, graph2, graph3, graph4, graph5, labels = "AUTO")
+
+#these box plots display the means, medians, upper quartile, lower quartile, and outliers.  The different graphs show the different y values, depending on if it measuring and showing water, protein, fat, lactosse, or ash. 
 ```
 
 # Question 6
 Create a plot showing how WGSS changes for K = 1 to 8 groups. For each K choice, cluster the mammals based on their standardized milk composition and set the nstart argument to run at 50 at each iteration. Compute and record WGSS. After the loop is done, show the plot of WGSS by number of clusters in your solutions. How many clusters does the elbow plot suggest? How does this compare to your impression from the dendrogram in Question 2?
 
 ```{r}
+wgss<-rep(1,8)
+for(i in 1:8){wgss[i]<-kmeans(Mammals_Milk_Std,centers=i,nstart=50)$tot.withinss}
+plot(c(1:8),wgss,type="b",pch=16,cex=1.3,ylim=c(0,100), xlab="Number of Groups",ylab="WGSS")
 
+# I suggest that 4 is a good number of clusters.  I came to this conclusion through the elbow method.  One can see that the graph curves or creates an elbow at 4.  This means that the y values following, or greater than 4, change the slope drastically due to it rounding off and being similar in value.  Therefore, 4 is the best number of clusters. 
+# As compared to the dendrogram in question 2, one sees that the y axis values do not even go up to 4.  This can be for a multitude of reasons, however, this causes me to think that the dendogram does not fully display some necessary data.  I would follow the number of clusters being 4, instead of a value lower than 2 - which the dendrogram suggests.
 ```
 
 
