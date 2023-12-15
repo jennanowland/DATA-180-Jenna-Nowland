@@ -1,0 +1,128 @@
+---
+title: "Final_Project_Jenna_Nowland_Data180"
+output: html_document
+date: "2023-12-12"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+
+# Question 1
+```{r}
+loans = read.csv('loan_default_data_set.csv')
+head(loans)
+
+# 1a.  The shape of this data is a data matrix.  This means there are a certain number of rows and columns, symbolizing observations in the data.
+
+dim(loans)
+# This means there are 20000 rows and 21 columns, not including the title/header row and columns.
+
+
+# 1b.
+column_titles = colnames(loans)
+print(column_titles)
+# This code prints out the titles of each column.
+
+
+# 1c.  This data set contains mostly numerical and categorical data.  The numbers represent numeric values/observations within a certain category.  For example, they sectioned off the data first, by defining what category in which they would like to observe, then gathered numeric data from it.  
+
+
+# 1d.  
+
+# The two columns where there are blank spaces in the data is pct_card_over_50_uti and rep_income.  After working the code below, one sees that about 9.79% of the data in both of the columns is missing, or empty. 
+missing1 = sum(is.na(loans$pct_card_over_50_uti))
+percentage_missing1 = ((missing1 / 20000) * 100)
+
+missing2 = sum(is.na(loans$rep_income))
+percentage_missing2 = ((missing1 / 20000) * 100)
+
+print(percentage_missing1)
+print(percentage_missing2)
+
+
+# 1e.  I believe missing values in the data should not be considered in the actual data, meaning, they should be removed and not considered in any totals.  For example, if one were trying to compute the average of a column, by counting the empty value, it will effect the total number of entries (which we divide by to find the average) and make the value smaller than it actually might be.  
+
+
+# 1f. With this data, I would use an unsupervised model.  This means that we do not have the response variable for each observation is a column or row but can still make interpretations from questions we ask.  We can use what we are given to find trends in the data.   
+
+
+# 1g.  After removing any row that had a vacant spot in the data, one sees that the row count goes from 20,000 to 16,653.
+
+clean_loans = na.omit(loans)
+print(clean_loans)
+dim(clean_loans)
+
+
+```
+
+
+
+
+# Question 2
+```{r}
+# 2a. 
+summary(clean_loans)
+
+
+# 2b.
+
+# Based on the mean, median, and mode of num_card_inq_24_month, one can tell the data is right-skewed because a lot of the values - minimum, median, and mean - are all under 2.  Then, the max is larger with a value of 18. 
+
+# Based on the mean, median, and mode of tot_amount_currently_past_due, I think the data will be right skewed due to the median being zero. 
+
+# Based on the mean, median, and mode of credit_age, I think it will be mostly bell-shaped.  This is because the mean and median are similar in value, so one can assume the center of the graph will have the highest frequency.
+
+
+# 2c. 
+
+hist(clean_loans$num_card_inq_24_month, col = 'green', xlab = "Card Inquiry", main = "Number of Card Inq - 24 Months", cex.lab=1.2,cex.axis=1.2)
+
+hist(clean_loans$tot_amount_currently_past_due, col = 'blue', xlab = "Amount", main = "Amount Past Due", cex.lab=1.2,cex.axis=1.2)
+
+hist(clean_loans$credit_age, col = 'orange', xlab = "Age", main = "Credit Age", cex.lab=1.2,cex.axis=1.2)
+
+# Yes, the shapes of the histograms plotted confirm my predictions.  I thought num_card_inq_24_month and tot_amount_currently_past_due would be right-skewed while credit_age would be bell-shaped.  This is accurate. 
+
+
+# 2d. 
+
+# I would convert the rep_education data into numerical data by assigning a number to each classification of education level.  For example, I would assign high school as a 2, college as a 4, and grad school as a 6.  This way, whenever we want to calculate something for those whose education level is high school, we only consider those who have a 2 under rep_education.
+
+# Another way to convert this to numerical data is to use the factor() feature and as.numeric() feature in R Studio.  After researching the as.numeric() feature, I found out I can use the factor() with it to classify and assign each level of the rep_numeric ('high school', 'college', or 'grad school') to be a number.  This is similar to what I stated above, but R Studio can perform it for us.
+ 
+```
+
+
+
+# Question 3
+```{r}
+# 3a. 
+barplot(table(clean_loans$Def_ind), width = 0.5, ylab = 'Count', xlab = "Def_ind", main = 'Def Ind Bar Graph', cex.lab = 1.2, cex.axis = 1.2, col = c(3,4))
+# We can see that this graph displays only two Def_ind, 0 and 1.  The highest frequency of the two values is 0, with a frequency over 12,000.  This would be considered a right skewed graph. 
+
+
+# 3b. 
+barplot(table(clean_loans$rep_education), ylab = 'Count', xlab = "Rep_Education", main = 'Education Levels', cex.lab = 1.2, cex.axis = 1.2, col = c(4,5,6,7))
+# One sees through this graph that a majority of those from this data set have college degrees, or attended college at one point. It looks that about 10,000 - perhaps a little more - attended College.  The next highest rank is high school at about 4,000, then graduates school at about 2,000.  Although it is not stated what "other" is regarding the levels of education, I think perhaps it is trade schools like plumbing, which is beyond high school but not College or graduate school.
+
+
+# 3c.
+hist(clean_loans$rep_income, col = 'purple', xlab = "Rep_Income", ylab = "Count", main = "Rep_Income", cex.lab=1.2,cex.axis=1.2)
+# Through this graph one can conclude that the data is mostly centered, meaning there is not a right or left skewing.  One can observe that the y axis is the amount of people whom make these incomes on the x axis.  
+
+
+# 3d. 
+ggplot(clean_loans, aes(tot_balance)) + geom_boxplot()
+# The graph displays several outliers in both the lower and upper range.  Outliers are values that are very far away from the median range, and have the ability to throw off the mean value (or average). Boxplots also display the median (which, for this graph, is just above the 100,000 mark), the upper quartile, and the lower quartile.  
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
