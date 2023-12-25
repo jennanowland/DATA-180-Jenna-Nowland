@@ -10,7 +10,7 @@ output:
 editor_options: 
   chunk_output_type: console
 ---
-
+18/20. Good job. 
 **Due date:** December 4 beginning of class.
 
 
@@ -33,14 +33,14 @@ Read the `news.csv` into R and create the object `news` using
 ```{r}
 library(tidyverse)
 library(tm)
-news<-read.csv("/Users/jennanowland/Desktop/Jenna Data 180/DATA-180-Jenna-Nowland/hw7/news.csv",header=T)
+news<-read.csv("news.csv",header=T)
 ```
 
 Read also the positive and negative word dictionaries, both found on Github. This will later come in handy:
 
 ```{r}
-posWords <- scan("/Users/jennanowland/Desktop/Jenna Data 180/DATA-180-Jenna-Nowland/hw7/positive-words.txt", character(0), sep = "\n")  # 2006 items
-negWords <- scan("/Users/jennanowland/Desktop/Jenna Data 180/DATA-180-Jenna-Nowland/hw7/negative-words.txt", character(0), sep = "\n")  # 4783 items
+posWords <- scan("positive-words.txt", character(0), sep = "\n")  # 2006 items
+negWords <- scan("negative-words.txt", character(0), sep = "\n")  # 4783 items
 head(posWords,15)
 head(negWords,15)
 ```
@@ -165,8 +165,8 @@ Let's now practice working with `quanteda` and `corpus` packages. Install the pa
 
 ```{r}
 library("quanteda")
-install.packages("corpus")
-library("corpus")
+#install.packages("corpus")
+#library("corpus")
 ```
 
 # Question 10
@@ -183,7 +183,9 @@ sort(x, decreasing = TRUE)[1:20]
 # Question 11
 Repeat the previous question for word pairs (frequency of 2 words that show up, instead of 1 word)
 ```{r}
-term_stats(charVector, ngrams = 2,filter = text_filter(drop_punct = TRUE, drop_symbol = TRUE, drop = stopwords_en))
+#term_stats(charVector, ngrams = 2,filter = text_filter(drop_punct = TRUE, drop_symbol = TRUE, drop = stopwords_en))
+
+# You should have used a different package/module for this number. 
 ```
 
 # Question 12
