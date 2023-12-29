@@ -3,7 +3,7 @@ title: "Final_Project_Jenna_Nowland_Data180"
 output: html_document
 date: "2023-12-12"
 ---
-
+38/40. Good job. 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -16,7 +16,7 @@ library(ggplot2)
 
 # Question 1
 ```{r}
-loans = read.csv('loan_default_data_set.csv')
+loans = read.csv("C:/Users/rodge/OneDrive/Desktop/DATA 180 -Intoduction to Data Science/DATA-180-Introduction-to-Data-Science--Section-2/data/loan_default_data_set.csv")
 head(loans)
 
 # 1a.  The shape of this data is a data matrix.  This means there are a certain number of rows and columns, symbolizing observations in the data.
@@ -50,7 +50,9 @@ print(percentage_missing2)
 # 1e.  I believe missing values in the data should not be considered in the actual data, meaning, they should be removed and not considered in any totals.  For example, if one were trying to compute the average of a column, by counting the empty value, it will effect the total number of entries (which we divide by to find the average) and make the value smaller than it actually might be.  
 
 
-# 1f. With this data, I would use an unsupervised model.  This means that we do not have the response variable for each observation is a column or row but can still make interpretations from questions we ask.  We can use what we are given to find trends in the data.   
+# 1f. With this data, I would use an unsupervised model.  This means that we do not have the response variable for each observation is a column or row but can still make interpretations from questions we ask.  We can use what we are given to find trends in the data. 
+
+# We should use a supervised learning model because we have a clear dependent and independent variable
 
 
 # 1g.  After removing any row that had a vacant spot in the data, one sees that the row count goes from 20,000 to 16,653.
